@@ -17,8 +17,10 @@ const outputArea = root.getElementsByClassName('output')[0]
 const queryButton = root.getElementsByClassName('query')[0]
 
 queryButton.addEventListener('click', function (event) {
+  const typeFilter = typeSelector.value !== '' ? typeSelector.value : undefined
+  const authorFilter = authorSelector.value !== '' ? authorSelector.value : undefined
   outputArea.innerHTML = `<div id="header">
-  type: ${typeSelector.value}, author: ${authorSelector.value}
+  type: ${typeFilter ? typeFilter : '<i>all types</i>'}, author: ${authorFilter ? authorFilter : '<i>any author</i>'}
   </div>`
 
   const opts = {
@@ -28,9 +30,9 @@ queryButton.addEventListener('click', function (event) {
       {
         $filter: {
           value: {
-            author: authorSelector.value,
+            author: authorFilter,
             content: {
-              type: typeSelector.value 
+              type: typeFilter
             }
           }
         }
