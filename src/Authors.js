@@ -43,7 +43,7 @@ export function getAuthorName(feedId) {
 }
 
 export default function getAuthors() {
-  const id2Name = {}
+  const retunedIds = {}
 
   const opts = {
     limit: 1000,
@@ -60,13 +60,12 @@ export default function getAuthors() {
   return pull(
     sbot.query.read(opts),
     pull.filter(msg => {
-      const first = !id2Name[msg.feedId]
-      id2Name[msg.feedId] = true
+      const first = !retunedIds[msg.feedId]
+      retunedIds[msg.feedId] = true
       return first
     }),
-    pull.asyncMap(async (msg,cb) => {
+    pull.paraMap(async (msg,cb) => {
       msg.name = await getAuthorName(msg.feedId)
-      console.log(msg)
       return cb(null, msg)
     })
   )

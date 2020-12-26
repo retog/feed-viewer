@@ -1,48 +1,56 @@
-import getMessageTypes from './MessageTypes.js'
-import getAuthors from './Authors.js'
-import '@vaadin/vaadin-combo-box'
+import './TypeSelector.js'
+import './AuthorSelector'
 
-root.innerHTML = `<h1>Scuttlebutt Feedviewer</h1>
+root.innerHTML = `
+<h1>Scuttlebutt Feedviewer</h1>
 
-<vaadin-combo-box class="typeSelector" label="type" clear-button-visible allow-custom-value></vaadin-combo-box>
-<vaadin-combo-box class="authorSelector" label="author"  item-value-path="feedId" item-label-path="name"
-      clear-button-visible allow-custom-value></vaadin-combo-box>
+<type-selector></type-selector>
+<author-selector></author-selector>
 
 <button class="query">Query</button>
 
 <div class="output"></div>
 `
-const typeSelector = root.getElementsByClassName('typeSelector')[0]
-const authorSelector = root.getElementsByClassName('authorSelector')[0]
+const typeSelector = root.getElementsByTagName('type-selector')[0]
+const authorSelector = root.getElementsByTagName('author-selector')[0]
 const outputArea = root.getElementsByClassName('output')[0]
+const queryButton = root.getElementsByClassName('query')[0]
 
-//ensure all webomponents are defined
-const undefinedElements = root.querySelectorAll(':not(:defined)')
+queryButton.addEventListener('click', function (event) {
+  outputArea.innerHTML = `<div id="header">
+  type: ${typeSelector.value}, author: ${authorSelector.value}
+  </div>`
 
-const promises = [...undefinedElements].map(
-  component => customElements.whenDefined(component.localName)
-)
+  const opts = {
+    limit: 100,
+    reverse: true,
+    query: [
+      {
+        $filter: {
+          value: {
+            author: authorSelector.value,
+            content: {
+              type: typeSelector.value 
+            }
+          }
+        }
+      }
+    ]
+  }
 
-;(async () => { 
-  await Promise.all(promises)
-
-  typeSelector.items = []
+  function prettyPrint(msg) {
+    outputArea.innerHTML += `<pre>${JSON.stringify(msg, null, 2)}</pre>`
+    outputArea.innerHTML += '<hr>'
+    // this just print the full object out as a string that's been nicely indented
+    // with each level of nesting
+  }
 
   pull(
-    getMessageTypes(),
-    pull.drain(value => typeSelector.items = [...typeSelector.items, value])
-  )
-
-  authorSelector.items = []
-
-  pull(
-    getAuthors(),
-    pull.drain(value => {
-      console.log("value", value)
-      authorSelector.items = [...authorSelector.items, value]
-    })
+    sbot.query.read(opts),
+    pull.drain(prettyPrint)
   )
 
 
-})()
+})
+
 
