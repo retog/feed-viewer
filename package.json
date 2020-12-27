@@ -17,5 +17,7 @@
     "patchboot": "0.0.1",
     "rollup": "^2.35.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@vaadin/vaadin-text-field": "^2.8.2"
+  }
 }
