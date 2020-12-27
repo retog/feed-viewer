@@ -6,7 +6,7 @@ export default function getMessageTypes() {
   const mesageTypes = {}
 
   const opts = {
-    limit: 10000,
+    limit: 1000,
     reverse: true,
     query: [
       {
