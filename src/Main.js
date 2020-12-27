@@ -42,7 +42,8 @@ queryButton.addEventListener('click', function (event) {
             content: {
               type: typeFilter
             }
-          }
+          },
+          timestamp: { $gt: 0 } // a hack that forces ordering by timestamp
         }
       }
     ]
