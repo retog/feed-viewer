@@ -9,7 +9,7 @@ root.innerHTML = `
 <type-selector></type-selector>
 <author-selector></author-selector>
 
-<vaadin-number-field label="limit" value="100" min="1" 
+<vaadin-number-field label="limit" value="20" min="1" 
 step="10" has-controls></vaadin-number-field>
 
 <button class="query">Query</button>
