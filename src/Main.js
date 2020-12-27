@@ -1,3 +1,4 @@
+import './MessageRenderer.js'
 import './TypeSelector.js'
 import './AuthorSelector'
 import '@vaadin/vaadin-text-field/vaadin-number-field.js'
@@ -47,16 +48,13 @@ queryButton.addEventListener('click', function (event) {
     ]
   }
 
-  function prettyPrint(msg) {
-    outputArea.innerHTML += `<pre>${JSON.stringify(msg, null, 2)}</pre>`
-    outputArea.innerHTML += '<hr>'
-    // this just print the full object out as a string that's been nicely indented
-    // with each level of nesting
-  }
-
   pull(
     sbot.query.read(opts),
-    pull.drain(prettyPrint)
+    pull.drain(msg => {
+      const messageRenderer = document.createElement('message-renderer')
+      messageRenderer.msg = msg
+      outputArea.append(messageRenderer)
+    })
   )
 
 
