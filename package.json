@@ -7,7 +7,7 @@
     "run:browser": "open-cli \"http://localhost:8080\" ",
     "run:server": "http-server . -p 8080",
     "run": "run-p run:*",
-    "deploy-app": "patchboot-install FeedApp.js 'Feed Viewer' 'Vie the contents of Scuttlebutt Feeds'"
+    "deploy-app": "patchboot-install dist/bundle.js 'Feed Viewer' 'Vie the contents of Scuttlebutt Feeds'"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^11.0.1",
