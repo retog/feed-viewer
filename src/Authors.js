@@ -50,8 +50,21 @@ export default function getAuthors() {
     reverse: true,
     query: [
       {
+        $filter: {
+          value: {
+            content: {
+              type: 'about',
+              name: { $is: 'string' }
+            }
+          },
+          timestamp: { $gt: 0 } // a hack that forces ordering by timestamp
+        }
+      },
+      {
         $map: {
-          feedId: ['value', 'author']
+          feedId: ['value', 'author'],
+          name: ['value', 'content', 'name'],
+          about: ['value', 'content', 'about']
         }
       }
     ]
@@ -59,14 +72,11 @@ export default function getAuthors() {
 
   return pull(
     sbot.query.read(opts),
+    pull.filter(msg => msg.feedId === msg.about), //only considering self assigned names
     pull.filter(msg => {
       const first = !retunedIds[msg.feedId]
       retunedIds[msg.feedId] = true
       return first
-    }),
-    pull.paraMap(async (msg,cb) => {
-      msg.name = await getAuthorName(msg.feedId)
-      return cb(null, msg)
     })
   )
 }
